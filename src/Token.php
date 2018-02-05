@@ -2,6 +2,7 @@
 
 namespace Cronofy;
 
+use Cronofy\Exception\CronofyException;
 use Cronofy\Interfaces\ConnectionInterface;
 
 class Token
@@ -23,7 +24,7 @@ class Token
     /**
      * @param array $params
      * @return bool
-     * @throws \CronofyException
+     * @throws CronofyException
      */
     public function request(array $params = []) : bool
     {
@@ -40,7 +41,7 @@ class Token
 
             $this->set($token);
         } catch (\Exception $e) {
-            throw new \CronofyException($e);
+            throw new CronofyException($e);
         }
         return false;
     }
@@ -48,7 +49,7 @@ class Token
     /**
      *  The refresh_token issued to you when the user authorized your access to their account. REQUIRED
      * @return bool
-     * @throws \CronofyException
+     * @throws CronofyException
      */
     public function refresh() : bool
     {
@@ -63,14 +64,14 @@ class Token
             $token = $this->connection->postTo('/oauth/token', $postFields);
             $this->set($token);
         } catch (\Exception $e) {
-            throw new \CronofyException($e);
+            throw new CronofyException($e);
         }
     }
 
     /**
      * The link_token to explicitly link to a pre-existing account. Details are available in the Cronofy API Documentation
      * @return mixed
-     * @throws \CronofyException
+     * @throws CronofyException
      */
     public function requestLinkToken()
     {
@@ -78,7 +79,7 @@ class Token
             $links = $this->connection->postTo('/' . self::API_VERSION . '/link_tokens');
             return $links;
         } catch (\Exception $e) {
-            throw new \CronofyException($e);
+            throw new CronofyException($e);
         }
     }
 
@@ -86,7 +87,7 @@ class Token
      * Either the refresh_token or access_token for the authorization you wish to revoke
      * @param string $token
      * @return mixed
-     * @throws \CronofyException
+     * @throws CronofyException
      */
     public function revoke(string $token)
     {
@@ -99,7 +100,7 @@ class Token
         try {
             return $this->connection->postTo('/oauth/token/revoke', $postFields);
         } catch (\Exception $e) {
-            throw new \CronofyException($e);
+            throw new CronofyException($e);
         }
     }
 

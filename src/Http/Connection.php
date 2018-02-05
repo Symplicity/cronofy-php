@@ -59,9 +59,10 @@ class Connection implements ConnectionInterface
     {
         $headers = [];
 
-        if (!empty($this->accessToken)) {
+        if ($this->accessToken !== null) {
             $headers['Authorization'] = sprintf('Bearer %s', $this->accessToken);
         }
+
         $headers['host'] = $this->hostDomain;
 
         if (!empty($params['with_content_header'])) {
