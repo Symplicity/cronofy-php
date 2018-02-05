@@ -14,8 +14,9 @@ use Cronofy\Interfaces\TokenInterface;
  */
 class Cronofy
 {
-    const USERAGENT = 'Cronofy PHP 0.15.0';
-    const API_VERSION = 'v1';
+
+    public const USERAGENT = 'Cronofy PHP 0.15.0';
+    public const API_VERSION = 'v1';
 
     protected $config = [];
 

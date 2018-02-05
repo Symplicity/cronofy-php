@@ -7,8 +7,6 @@ use Cronofy\Interfaces\ConnectionInterface;
 
 class Token
 {
-    public const API_VERSION = 'v1';
-
     private $refreshToken;
     private $accessToken;
     private $expiresIn;
@@ -76,7 +74,7 @@ class Token
     public function requestLinkToken()
     {
         try {
-            $links = $this->connection->postTo('/' . self::API_VERSION . '/link_tokens');
+            $links = $this->connection->postTo('/' . Cronofy::API_VERSION . '/link_tokens');
             return $links;
         } catch (\Exception $e) {
             throw new CronofyException($e);

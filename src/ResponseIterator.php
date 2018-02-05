@@ -2,32 +2,38 @@
 
 namespace Cronofy;
 
+use Cronofy\Exception\CronofyException;
+use Cronofy\Interfaces\ConnectionInterface;
+
 class ResponseIterator
 {
-    private $cronofy;
-    private $items_key;
-    private $auth_headers;
-    private $url;
-    private $url_params;
+    private $connection;
+    private $itemsKey;
+    private $urlParams;
+    private $firstPage;
 
-    public function __construct($cronofy, $items_key, $auth_headers, $url, $url_params){
-        $this->cronofy = $cronofy;
-        $this->items_key = $items_key;
-        $this->auth_headers = $auth_headers;
-        $this->url = $url;
-        $this->url_params = $url_params;
-        $this->first_page = $this->get_page($url, $url_params);
+    public function __construct(ConnectionInterface $connection)
+    {
+        $this->connection = $connection;
+    }
+
+    public function setItems(string $url, string $itemKey, array $urlParams = []) : self
+    {
+        $this->itemsKey = $itemKey;
+        $this->urlParams = $urlParams;
+        $this->firstPage = $this->getPage($url);
+        return self;
     }
 
     public function each(){
-        $page = $this->first_page;
+        $page = $this->firstPage;
 
         for($i = 0; $i < count($page[$this->items_key]); $i++){
             yield $page[$this->items_key][$i];
         }
 
         while(isset($page["pages"]["next_page"])){
-            $page = $this->get_page($page["pages"]["next_page"]);
+            $page = $this->getPage($page["pages"]["next_page"]);
 
             for($i = 0; $i < count($page[$this->items_key]); $i++){
                 yield $page[$this->items_key][$i];
@@ -35,22 +41,13 @@ class ResponseIterator
         }
     }
 
-    private function get_page($url, $url_params=""){
-        $curl = curl_init();
-
-        curl_setopt($curl, CURLOPT_URL, $url.$url_params);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $this->auth_headers);
-        curl_setopt($curl, CURLOPT_USERAGENT, Cronofy::USERAGENT);
-        // empty string means send all supported encoding types
-        curl_setopt($curl, CURLOPT_ENCODING, '');
-        $result = curl_exec($curl);
-        if (curl_errno($curl) > 0) {
-            throw new CronofyException(curl_error($curl), 2);
+    private function getPage(string $url) : array
+    {
+        try {
+            $response = $this->connection->get($url, $this->urlParams);
+            return json_decode($response->getBody(), true);
+        } catch (\Exception $e) {
+            throw new CronofyException();
         }
-        $status_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        curl_close($curl);
-
-        return $this->cronofy->handle_response($result, $status_code);
     }
 }

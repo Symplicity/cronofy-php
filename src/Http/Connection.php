@@ -2,6 +2,7 @@
 
 namespace Cronofy\Http;
 
+use Cronofy\Exception\InvalidUrlRequest;
 use Cronofy\Interfaces\ConnectionInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
@@ -48,13 +49,32 @@ class Connection implements ConnectionInterface
         return null;
     }
 
-    public function postTo(string $uri, array $params = [])
+    public function postTo(string $url, array $params = [])
     {
+        $this->checkUrl($url);
         $headers = $this->getHeaders($params);
-        return $this->getClient()->request('POST', $uri, [
+        return $this->client->request('POST', $url, [
             'form_params' => $params,
             'headers' => $headers
         ]);
+    }
+
+    public function get(string $url, array $params = [])
+    {
+        $this->checkUrl($url);
+        $headers = $this->getHeaders($params);
+        return $this->client->request('GET', $url, [
+            'headers' => $headers,
+            'params' => $params
+        ]);
+    }
+
+    public function checkUrl(string $url) : bool
+    {
+        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
+            return true;
+        }
+        throw new InvalidUrlRequest();
     }
 
     public function getHeaders(array &$params = []) : array
