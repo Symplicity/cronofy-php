@@ -16,6 +16,7 @@ class Connection implements ConnectionInterface
     private $clientId;
     private $clientSecret;
     private $apiRootUrl;
+    private $appRootUrl;
     private $hostDomain;
     private $accessToken;
 
@@ -34,6 +35,7 @@ class Connection implements ConnectionInterface
     {
         $dataCenterAddin = empty($this->config['data_center']) ? '' : sprinf('-%s', $this->config['data_center']);
         $this->apiRootUrl = "https://api{$dataCenterAddin}.cronofy.com";
+        $this->appRootUrl = "https://app{$dataCenterAddin}.cronofy.com";
         $this->hostDomain = "api{$dataCenterAddin}.cronofy.com";
     }
 
@@ -110,5 +112,29 @@ class Connection implements ConnectionInterface
     public function setAccessToken(?string $accessToken)
     {
         $this->accessToken = $accessToken;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getApiRootUrl() : string
+    {
+        return $this->apiRootUrl;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAppRootUrl() : string
+    {
+        return $this->appRootUrl;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getHostDomain() : string
+    {
+        return $this->hostDomain;
     }
 }

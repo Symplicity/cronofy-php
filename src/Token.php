@@ -38,8 +38,8 @@ class Token
             ];
 
             $token = $this->connection->postTo('oauth/token', $postFields);
-
             $this->set($token);
+            return true;
         } catch (\Exception $e) {
             throw new CronofyException($e);
         }
