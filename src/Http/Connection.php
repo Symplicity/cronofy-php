@@ -6,7 +6,6 @@ use Cronofy\Exception\InvalidUrlRequest;
 use Cronofy\Interfaces\ConnectionInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Psr7\Response;
 
 /**
  * Class Connection
@@ -27,8 +26,8 @@ class Connection implements ConnectionInterface
     public function __construct(array $config)
     {
         $this->config = $config;
-        $this->setClientId($config['client_id']);
-        $this->setClientSecret($config['client_secret']);
+        $this->setClientId($config['client_id'] ?? null);
+        $this->setClientSecret($config['client_secret'] ?? null);
         $this->setAccessToken($config['access_token'] ?? null);
         $this->setUrls();
     }
@@ -52,7 +51,6 @@ class Connection implements ConnectionInterface
 
     public function post(string $url, array $params = [])
     {
-        $this->checkUrl($url);
         $headers = $this->getHeaders($params);
         return $this->client->request('POST', $url, [
             'form_params' => $params,
@@ -62,30 +60,20 @@ class Connection implements ConnectionInterface
 
     public function get(string $url, array $params = [])
     {
-        $this->checkUrl($url);
         $headers = $this->getHeaders($params);
         return $this->client->request('GET', $url, [
             'headers' => $headers,
-            'params' => $params
+            'query' => $params
         ]);
     }
 
     public function delete(string $url, array $params = [])
     {
-        $this->checkUrl($url);
         $headers = $this->getHeaders($params);
         return $this->client->request('DELETE', $url, [
             'headers' => $headers,
             'params' => $params
         ]);
-    }
-
-    public function checkUrl(string $url) : bool
-    {
-        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
-            return true;
-        }
-        throw new InvalidUrlRequest();
     }
 
     public function getHeaders(array &$params = []) : array
@@ -105,12 +93,6 @@ class Connection implements ConnectionInterface
         return $headers;
     }
 
-    public static function toArray(Response $response) : array
-    {
-        $body = $response->getBody();
-        return json_decode($body, true);
-    }
-
     /**
      * @return mixed
      */
@@ -122,7 +104,7 @@ class Connection implements ConnectionInterface
     /**
      * @param mixed $clientId
      */
-    private function setClientId(string $clientId)
+    private function setClientId(?string $clientId)
     {
         $this->clientId = $clientId;
     }
@@ -138,7 +120,7 @@ class Connection implements ConnectionInterface
     /**
      * @param mixed $clientSecret
      */
-    private function setClientSecret(string $clientSecret)
+    private function setClientSecret(?string $clientSecret)
     {
         $this->clientSecret = $clientSecret;
     }

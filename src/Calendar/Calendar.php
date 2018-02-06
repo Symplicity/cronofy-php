@@ -4,6 +4,7 @@ namespace Cronofy\Calendar;
 
 use Cronofy\Cronofy;
 use Cronofy\Exception\CronofyException;
+use Cronofy\Http\Response;
 use Cronofy\Interfaces\ConnectionInterface;
 use Cronofy\ResponseIterator;
 
@@ -21,25 +22,14 @@ final class Calendar
     public function listCalendars()
     {
         try {
-            return $this->connection->get(Cronofy::API_VERSION . '/calendars');
+            $response = $this->connection->get(Cronofy::API_VERSION . '/calendars');
+            return Response::toArray($response);
         } catch (\Exception $e) {
             throw new CronofyException($e->getMessage());
         }
     }
 
     /**
-     *  Params may include :
-     *   Date from : The minimum date from which to return events. Defaults to 16 days in the past. OPTIONAL
-     *   Date to : The date to return events up until. Defaults to 201 days in the future. OPTIONAL
-     *   String tzid : A string representing a known time zone identifier from the IANA Time Zone Database. REQUIRED
-     *   Boolean include_deleted : Indicates whether to include or exclude events that have been deleted. Defaults to excluding deleted events. OPTIONAL
-     *   Boolean include_moved: Indicates whether events that have ever existed within the given window should be included or excluded from the results. Defaults to only include events currently within the search window. OPTIONAL
-     *   Time last_modified : The Time that events must be modified on or after in order to be returned. Defaults to including all events regardless of when they were last modified. OPTIONAL
-     *   Boolean include_managed : Indiciates whether events that you are managing for the account should be included or excluded from the results. Defaults to include only non-managed events. OPTIONAL
-     *   Boolean only_managed : Indicates whether only events that you are managing for the account should be included in the results. OPTIONAL
-     *   Array calendar_ids : Restricts the returned events to those within the set of specified calendar_ids. Defaults to returning events from all of a user's calendars. OPTIONAL
-     *   Boolean localized_times : Indicates whether the events should have their start and end times returned with any available localization information. Defaults to returning start and end times as simple Time values. OPTIONAL
-     *   Boolean include_geo : Indicates whether the events should have their location's latitude and longitude returned where available. OPTIONAL
      * @param array $params
      * @returns ResponseIterator
      * @throws CronofyException

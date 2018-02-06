@@ -3,6 +3,8 @@
 namespace Cronofy;
 
 use Cronofy\Exception\CronofyException;
+use Cronofy\Http\Connection;
+use Cronofy\Http\Response;
 use Cronofy\Interfaces\ConnectionInterface;
 
 class ResponseIterator
@@ -22,21 +24,21 @@ class ResponseIterator
         $this->itemsKey = $itemKey;
         $this->urlParams = $urlParams;
         $this->firstPage = $this->getPage($url);
-        return self;
+        return $this;
     }
 
     public function each(){
         $page = $this->firstPage;
 
-        for($i = 0; $i < count($page[$this->items_key]); $i++){
-            yield $page[$this->items_key][$i];
+        for($i = 0; $i < count($page[$this->itemsKey]); $i++){
+            yield $page[$this->itemsKey][$i];
         }
 
         while(isset($page["pages"]["next_page"])){
             $page = $this->getPage($page["pages"]["next_page"]);
 
-            for($i = 0; $i < count($page[$this->items_key]); $i++){
-                yield $page[$this->items_key][$i];
+            for($i = 0; $i < count($page[$this->itemsKey]); $i++){
+                yield $page[$this->itemsKey][$i];
             }
         }
     }
@@ -45,9 +47,9 @@ class ResponseIterator
     {
         try {
             $response = $this->connection->get($url, $this->urlParams);
-            return json_decode($response->getBody(), true);
+            return Response::toArray($response);
         } catch (\Exception $e) {
-            throw new CronofyException();
+            throw new CronofyException($e->getMessage(), $e->getCode());
         }
     }
 }
