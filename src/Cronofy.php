@@ -32,6 +32,7 @@ class Cronofy
             return $this->tokenManager;
         } elseif ($property === 'connection') {
             $this->connection = new Connection($this->config);
+            return $this->connection;
         }
     }
 

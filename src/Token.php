@@ -35,7 +35,7 @@ class Token
                 'redirect_uri' => $params['redirect_uri']
             ];
 
-            $token = $this->connection->postTo('oauth/token', $postFields);
+            $token = $this->connection->post('oauth/token', $postFields);
             $this->set($token);
             return true;
         } catch (\Exception $e) {
@@ -59,7 +59,7 @@ class Token
         );
 
         try {
-            $token = $this->connection->postTo('/oauth/token', $postFields);
+            $token = $this->connection->post('/oauth/token', $postFields);
             $this->set($token);
         } catch (\Exception $e) {
             throw new CronofyException($e);
@@ -74,7 +74,7 @@ class Token
     public function requestLinkToken()
     {
         try {
-            $links = $this->connection->postTo('/' . Cronofy::API_VERSION . '/link_tokens');
+            $links = $this->connection->post('/' . Cronofy::API_VERSION . '/link_tokens');
             return $links;
         } catch (\Exception $e) {
             throw new CronofyException($e);
@@ -96,7 +96,7 @@ class Token
         );
 
         try {
-            return $this->connection->postTo('/oauth/token/revoke', $postFields);
+            return $this->connection->post('/oauth/token/revoke', $postFields);
         } catch (\Exception $e) {
             throw new CronofyException($e);
         }

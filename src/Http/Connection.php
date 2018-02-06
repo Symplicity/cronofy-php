@@ -49,7 +49,7 @@ class Connection implements ConnectionInterface
         return null;
     }
 
-    public function postTo(string $url, array $params = [])
+    public function post(string $url, array $params = [])
     {
         $this->checkUrl($url);
         $headers = $this->getHeaders($params);
@@ -64,6 +64,16 @@ class Connection implements ConnectionInterface
         $this->checkUrl($url);
         $headers = $this->getHeaders($params);
         return $this->client->request('GET', $url, [
+            'headers' => $headers,
+            'params' => $params
+        ]);
+    }
+
+    public function delete(string $url, array $params = [])
+    {
+        $this->checkUrl($url);
+        $headers = $this->getHeaders($params);
+        return $this->client->request('DELETE', $url, [
             'headers' => $headers,
             'params' => $params
         ]);
