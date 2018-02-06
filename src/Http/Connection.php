@@ -6,6 +6,7 @@ use Cronofy\Exception\InvalidUrlRequest;
 use Cronofy\Interfaces\ConnectionInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Psr7\Response;
 
 /**
  * Class Connection
@@ -102,6 +103,12 @@ class Connection implements ConnectionInterface
             unset($params['with_content_header']);
         }
         return $headers;
+    }
+
+    public static function toArray(Response $response) : array
+    {
+        $body = $response->getBody();
+        return json_decode($body, true);
     }
 
     /**

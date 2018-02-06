@@ -95,7 +95,7 @@ final class Calendar
      *
      * @param array $params
      * @return bool
-     * @throws CronofyException
+     * @throws CronofyException | \InvalidArgumentException
      */
     public function upsertEvent(array $params)
     {
