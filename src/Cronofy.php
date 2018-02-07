@@ -3,6 +3,10 @@
 namespace Cronofy;
 
 use Cronofy\Calendar\Calendar;
+use Cronofy\Calendar\Channel;
+use Cronofy\Calendar\Channels;
+use Cronofy\Calendar\Profiles;
+use Cronofy\Exception\CronofyException;
 use Cronofy\Http\Connection;
 use Cronofy\Interfaces\ConnectionInterface;
 use Cronofy\Interfaces\TokenInterface;
@@ -141,10 +145,14 @@ class Cronofy
         return $url;
     }
 
-    public function list_calendar()
+    public function list_calendar() : array
     {
-        $calendars = new Calendar($this->connection, new ResponseIterator($this->connection));
-        return $calendars->listCalendars();
+        try {
+            $calendars = new Calendar($this->connection, new ResponseIterator($this->connection));
+            return $calendars->listCalendars();
+        } catch (CronofyException $e) {
+            return ['error' => $e->getMessage()];
+        }
     }
 
     /**
@@ -165,8 +173,14 @@ class Cronofy
      */
     public function read_events(array $params)
     {
-        $calendars = new Calendar($this->connection, new ResponseIterator($this->connection));
-        return $calendars->readEvents($params);
+        try {
+            $calendars = new Calendar($this->connection, new ResponseIterator($this->connection));
+            return $calendars->readEvents($params);
+        } catch (CronofyException $e) {
+            return [
+                'error' => $e->getMessage()
+            ];
+        }
     }
 
     /**
@@ -179,6 +193,113 @@ class Cronofy
     {
         $calendars = new Calendar($this->connection, new ResponseIterator($this->connection));
         return $calendars->deleteEvent($params);
+    }
+
+    /**
+     * Params options:
+     * Date from : The minimum date from which to return free-busy information. Defaults to 16 days in the past. OPTIONAL
+     * Date to : The date to return free-busy information up until. Defaults to 201 days in the future. OPTIONAL
+     * String tzid : A string representing a known time zone identifier from the IANA Time Zone Database. REQUIRED
+     * Boolean include_managed : Indiciates whether events that you are managing for the account should be included or excluded from the results. Defaults to include only non-managed events. OPTIONAL
+     * Array calendar_ids : Restricts the returned free-busy information to those within the set of specified calendar_ids. Defaults to returning free-busy information from all of a user's calendars. OPTIONAL
+     * Boolean localized_times : Indicates whether the free-busy information should have their start and end times returned with any available localization information. Defaults to returning start and end times as simple Time values. OPTIONAL
+     * @param array $params
+     * @return ResponseIterator
+     * @throws CronofyException
+     */
+    public function free_busy(array $params)
+    {
+        $calendars = new Calendar($this->connection, new ResponseIterator($this->connection));
+        return $calendars->freeBusy($params);
+    }
+
+    /**
+     * Param options:
+     * calendar_id : The calendar_id of the calendar you wish the event to be added to. REQUIRED
+     * String event_id : The String that uniquely identifies the event. REQUIRED
+     * String summary : The String to use as the summary, sometimes referred to as the name, of the event. REQUIRED
+     * String description : The String to use as the description, sometimes referred to as the notes, of the event. REQUIRED
+     * String tzid : A String representing a known time zone identifier from the IANA Time Zone Database. OPTIONAL
+     * Time start: The start time can be provided as a simple Time string or an object with two attributes, time and tzid. REQUIRED
+     * Time end: The end time can be provided as a simple Time string or an object with two attributes, time and tzid. REQUIRED
+     * String location.description : The String describing the event's location. OPTIONAL
+     * String location.lat : The String describing the event's latitude. OPTIONAL
+     * String location.long : The String describing the event's longitude. OPTIONAL
+     * Array reminders : An array of arrays detailing a length of time and a quantity. OPTIONAL for example: array(array("minutes" => 30), array("minutes" => 1440)
+     * Boolean reminders_create_only: A Boolean specifying whether reminders should only be applied when creating an event. OPTIONAL
+     * String transparency : The transparency of the event. Accepted values are "transparent" and "opaque". OPTIONAL
+     * Array attendees : An array of "invite" and "reject" arrays which are lists of attendees to invite and remove from the event. OPTIONAL for example: array("invite" => array(array("email" => "new_invitee@test.com", "display_name" => "New Invitee")) "reject" => array(array("email" => "old_invitee@test.com", "display_name" => "Old Invitee")))
+     *
+     * @param array $params
+     * @return bool
+     * @throws CronofyException | \InvalidArgumentException
+     */
+    public function upsert_event(array $params)
+    {
+        $calendars = new Calendar($this->connection, new ResponseIterator($this->connection));
+        return $calendars->upsertEvent($params);
+    }
+
+    /**
+     * Params need to include:
+     * String callback_url : The URL that is notified whenever a change is made. REQUIRED
+     * @param array $params
+     * @return result of new channel
+     * @throws CronofyException | \InvalidArgumentException
+     */
+    public function create_channel(array $params)
+    {
+        $channel = new Channel($this->connection);
+        return $channel->createChannel($params);
+    }
+
+    public function list_channels()
+    {
+        $channel = new Channel($this->connection);
+        return $channel->listChannels();
+    }
+
+    /**
+     * Params must include:
+     * channel_id : The ID of the channel to be closed. REQUIRED
+     * @param array $params
+     * @return array - Array of channels
+     * @throws CronofyException | \InvalidArgumentException
+     */
+    public function close_channel(array $params)
+    {
+        $channel = new Channel($this->connection);
+        return $channel->closeChannel($params);
+    }
+
+    /**
+     * Info for the user logged in. Details are available in the Cronofy API Documentation
+     * @return mixed
+     */
+    public function get_account()
+    {
+        $profiles = new Profiles($this->connection);
+        return $profiles->getAccount();
+    }
+
+    /**
+     * Userinfo for the user logged in. Details are available in the Cronofy API Documentation
+     * @return mixed
+     */
+    public function get_userinfo()
+    {
+        $profiles = new Profiles($this->connection);
+        return $profiles->getUserInfo();
+    }
+
+    /**
+     * list of all the authenticated user's calendar profiles. Details are available in the Cronofy API Documentation
+     * @return mixed
+     */
+    public function get_profiles()
+    {
+        $profiles = new Profiles($this->connection);
+        return $profiles->getProfiles();
     }
 
     /**

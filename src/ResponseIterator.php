@@ -3,11 +3,11 @@
 namespace Cronofy;
 
 use Cronofy\Exception\CronofyException;
-use Cronofy\Http\Connection;
 use Cronofy\Http\Response;
 use Cronofy\Interfaces\ConnectionInterface;
+use Cronofy\Interfaces\ResponseIteratorInterface;
 
-class ResponseIterator
+class ResponseIterator implements ResponseIteratorInterface
 {
     private $connection;
     private $itemsKey;

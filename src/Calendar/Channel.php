@@ -6,7 +6,7 @@ use Cronofy\Exception\CronofyException;
 use Cronofy\Http\Connection;
 use Cronofy\Interfaces\ConnectionInterface;
 
-class Channels
+class Channel
 {
     private $connection;
 
@@ -16,10 +16,8 @@ class Channels
     }
 
     /**
-     * Params need to include:
-     * String callback_url : The URL that is notified whenever a change is made. REQUIRED
      * @param array $params
-     * @return result of new channel
+     * @return mixed
      * @throws CronofyException | \InvalidArgumentException
      */
     public function createChannel(array $params = [])
@@ -57,10 +55,8 @@ class Channels
     }
 
     /**
-     * Params must include:
-     * channel_id : The ID of the channel to be closed. REQUIRED
      * @param array $params
-     * @return array - Array of channels
+     * @return mixed
      * @throws CronofyException | \InvalidArgumentException
      */
     public function closeChannel(array $params = [])
