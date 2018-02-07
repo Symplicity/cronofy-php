@@ -6,6 +6,7 @@ use Cronofy\Calendar\Calendar;
 use Cronofy\Calendar\Channel;
 use Cronofy\Calendar\Channels;
 use Cronofy\Calendar\Profiles;
+use Cronofy\Calendar\SmartInvite;
 use Cronofy\Exception\CronofyException;
 use Cronofy\Http\Connection;
 use Cronofy\Interfaces\ConnectionInterface;
@@ -300,6 +301,186 @@ class Cronofy
     {
         $profiles = new Profiles($this->connection);
         return $profiles->getProfiles();
+    }
+
+    /**
+     * Params may include:
+     * calendar_id : The calendar_id of the calendar you wish the event to be removed from. REQUIRED
+     * event_uid : The String that uniquely identifies the event. REQUIRED
+     * @param array $params
+     */
+    public function delete_external_event(array $params)
+    {
+        $calendars = new Calendar($this->connection, new ResponseIterator($this->connection));
+        return $calendars->deleteEvent($params);
+    }
+
+    /**
+     * Params should include :
+     * permissions : The permissions to elevate to. Should be in an array of `array($calendar_id, $permission_level)`. REQUIRED
+     * redirect_uri : The application's redirect URI. REQUIRED
+     *
+     * @param $params
+     * @return mixed
+     * @throws CronofyException
+     */
+    public function elevated_permissions(array $params)
+    {
+        $user = new User($this->connection);
+        return $user->elevatePermissions($params);
+    }
+
+    /*
+         email : The email of the user to be authorized. REQUIRED
+         scope : The scopes to authorize for the user. REQUIRED
+         callback_url : The URL to return to after authorization. REQUIRED
+        */
+    public function authorize_with_service_account(array $params)
+    {
+        $user = new User($this->connection);
+        return $user->authorizeWithServiceAccount($params);
+    }
+
+    /**
+     * oauth: An object of redirect_uri and scope following the event creation, for example: array("redirect_uri" => "http://test.com/","scope" => "test_scope")
+     * event: An object with an event's details, for example: array("event_id" => "test_event_id", "summary" => "Add to Calendar test event", "start" => "2017-01-01T12:00:00Z", "end" => "2017-01-01T15:00:00Z")
+     * @param array $params
+     */
+    public function add_to_calendar(array $params)
+    {
+        $calendars = new Calendar($this->connection, new ResponseIterator($this->connection));
+        return $calendars->addToCalendar($params);
+    }
+
+    /*
+          returns $result - Array of resources. Details
+          are available in the Cronofy API Documentation
+         */
+    public function resources()
+    {
+        try {
+            return $this->connection->get('/' . self::API_VERSION . '/resources');
+        } catch (\Exception $e) {
+            return [
+                'error' => $e->getMessage()
+            ];
+        }
+    }
+
+    /*
+          participants : An array of the groups of participants whose availability should be taken into account. REQUIRED
+                         for example: array(
+                                        array("members" => array(
+                                          array("sub" => "acc_567236000909002"),
+                                          array("sub" => "acc_678347111010113")
+                                        ), "required" => "all")
+                                      )
+          required_duration : Duration that an available period must last to be considered viable. REQUIRED
+                         for example: array("minutes" => 60)
+          available_periods : An array of available periods within which suitable matches may be found. REQUIRED
+                         for example: array(
+                                        array("start" => "2017-01-01T09:00:00Z", "end" => "2017-01-01T18:00:00Z"),
+                                        array("start" => "2017-01-02T09:00:00Z", "end" => "2017-01-02T18:00:00Z")
+                                      )
+         */
+    public function availability(array $params)
+    {
+        $calendars = new Calendar($this->connection);
+        return $calendars->availability($params);
+    }
+
+    /*
+          oauth: An object of redirect_uri and scope following the event creation
+                 for example: array(
+                                "redirect_uri" => "http://test.com/",
+                                "scope" => "test_scope"
+                              )
+          event: An object with an event's details
+                 for example: array(
+                                "event_id" => "test_event_id",
+                                "summary" => "Add to Calendar test event",
+                              )
+          availability: An object holding the event's availability information
+                 for example: array(
+                                "participants" => array(
+                                  array(
+                                    "members" => array(
+                                      array(
+                                        "sub" => "acc_567236000909002"
+                                        "calendar_ids" => array("cal_n23kjnwrw2_jsdfjksn234")
+                                      )
+                                    ),
+                                    "required" => "all"
+                                  )
+                                ),
+                                "required_duration" => array(
+                                  "minutes" => 60
+                                ),
+                                "available_periods" => array(
+                                  array(
+                                    "start" => "2017-01-01T09:00:00Z",
+                                    "end" => "2017-01-01T17:00:00Z"
+                                  )
+                                )
+                              )
+          target_calendars: An object holding the calendars for the event to be inserted into
+                  for example: array(
+                    array(
+                      "sub" => "acc_567236000909002",
+                      "calendar_id" => "cal_n23kjnwrw2_jsdfjksn234"
+                    )
+                  )
+          tzid: the timezone to create the event in
+                for example:  'Europe/London'
+         */
+    public function real_time_scheduling($params)
+    {
+        $calendar = new Calendar($this->connection);
+        return $calendar->scheduleRealTime($params);
+    }
+
+
+    /*
+          Array event: An object with an event's details REQUIRED
+                 for example: array(
+                                "summary" => "Add to Calendar test event",
+                                "start" => "2017-01-01T12:00:00Z",
+                                "end" => "2017-01-01T15:00:00Z"
+                              )
+          Array recipient: An object with recipient details REQUIRED
+                     for example: array(
+                         "email" => "example@example.com"
+                     )
+          String smart_invite_id: A string representing the id for the smart invite. REQUIRED
+          String callback_url : The URL that is notified whenever a change is made. REQUIRED
+         */
+    public function create_smart_invite(array $params)
+    {
+        $smartInvite = new SmartInvite($this->connection);
+        return $smartInvite->createSmartInvite($params);
+    }
+
+    /*
+         Array recipient: An object with recipient details REQUIRED
+                    for example: array(
+                        "email" => "example@example.com"
+                    )
+         String smart_invite_id: A string representing the id for the smart invite. REQUIRED
+        */
+    public function cancel_smart_invite($params)
+    {
+        $smartInvite = new SmartInvite($this->connection);
+        return $smartInvite->cancelSmartInvite($params);
+    }
+
+    /*
+          String smart_invite_id: A string representing the id for the smart invite. REQUIRED
+          String recipient_email: A string representing the email of the recipient to get status for. REQUIRED
+         */
+    public function get_smart_invite($smart_invite_id, $recipient_email)
+    {
+        $smartInvite = new SmartInvite($this->connection);
+        return $smartInvite->getSmartInvite($smart_invite_id, $recipient_email);
     }
 
     /**

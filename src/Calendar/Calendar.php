@@ -125,6 +125,100 @@ final class Calendar
         }
     }
 
+    public function createCalendar(array $params)
+    {
+        try {
+            return $this->connection->post('/' . Cronofy::API_VERSION . '/calendars', $params);
+        } catch (\Exception $e) {
+            throw new CronofyException($e->getMessage());
+        }
+    }
+
+    public function addToCalendar(array $params)
+    {
+        $postFields = [
+            'client_id' => $this->client_id,
+            'client_secret' => $this->client_secret,
+            'oauth' => $params['oauth'],
+            'event' => $params['event'],
+        ];
+
+        try {
+            return $this->connection->post('/' . Cronofy::API_VERSION . '/add_to_calendar', $postFields);
+        } catch (\Exception $e) {
+            throw new CronofyException($e->getMessage());
+        }
+    }
+
+    /**
+     * @param array $params
+     * @throws CronofyException | \InvalidArgumentException
+     */
+    public function changeParticipationStatus(array $params)
+    {
+        if (empty($params['calendar_id']) || empty($params['event_uid']) || empty($params['status'])) {
+            throw new \InvalidArgumentException('Missing required params.');
+        }
+
+        $postFields = [
+            'status' => $params['status']
+        ];
+
+        try {
+            return $this->connection->post('/' . Cronofy::API_VERSION . '/calendars/' . $params['calendar_id'] . '/events' . $params['event_uid'] . '/participation_status', $postFields);
+        } catch (\Exception $e) {
+            throw new CronofyException($e->getMessage());
+        }
+    }
+
+    /**
+     * @param array $params
+     * @return mixed
+     * @throws CronofyException | \InvalidArgumentException
+     */
+    public function availability(array $params)
+    {
+        if (empty($params['participants']) || empty($params['required_duration']) || empty($params['available_periods'])) {
+            throw new \InvalidArgumentException('Missing required params.');
+        }
+
+        $postFields = array(
+            'participants' => $params['participants'],
+            'required_duration' => $params['required_duration'],
+            'available_periods' => $params['available_periods']
+        );
+
+        try {
+            return $this->connection->post('/' . Cronofy::API_VERSION . '/availability', $postFields);
+        } catch (\Exception $e) {
+            throw new CronofyException($e->getMessage());
+        }
+    }
+
+    /**
+     * @param array $params
+     * @return mixed
+     * @throws CronofyException
+     */
+    public function realTimeScheduling(array $params)
+    {
+        $postFields = array(
+            'client_id' => $this->connection->getClientId(),
+            'client_secret' => $this->connection->getClientSecret(),
+            'oauth' => $params['oauth'],
+            'event' => $params['event'],
+            'availability' => $params['availability'],
+            'target_calendars' => $params['target_calendars'],
+            'tzid' => $params['tzid'],
+        );
+
+        try {
+            return $this->connection->post('/' . Cronofy::API_VERSION . '/real_time_scheduling', $postFields);
+        } catch (\Exception $e) {
+            throw new CronofyException($e->getMessage());
+        }
+    }
+
     private function getConnectionUrl() : string
     {
         return $this->connection->getApiRootUrl() . '/' . Cronofy::API_VERSION;
