@@ -20,7 +20,6 @@ use Cronofy\Interfaces\TokenInterface;
  */
 class Cronofy
 {
-
     public const USERAGENT = 'Cronofy PHP 0.15.0';
     public const API_VERSION = 'v1';
 
@@ -85,7 +84,6 @@ class Cronofy
         try {
             return $this->tokenManager->requestLinkToken();
         } catch (\Exception $e) {
-
         }
     }
 
@@ -94,7 +92,6 @@ class Cronofy
         try {
             return $this->tokenManager->revoke($token);
         } catch (\Exception $e) {
-
         }
     }
 
