@@ -113,6 +113,35 @@ class Token
         return false;
     }
 
+    public function getAuthorizationUrl(array $params) : string
+    {
+        $scope_list = rawurlencode(join(" ", $params['scope']));
+        $url = $this->connection->getAppRootUrl() . '/oauth/authorize?response_type=code&client_id=' . $this->connection->getClientId() . '&redirect_uri=' . urlencode($params['redirect_uri']) . '&scope=' . $scope_list;
+        if (!empty($params['state'])) {
+            $url .= '&state=' . $params['state'];
+        }
+        if (!empty($params['avoid_linking'])) {
+            $url .= '&avoid_linking=' . $params['avoid_linking'];
+        }
+        if (!empty($params['link_token'])) {
+            $url.= '&link_token=' . $params['link_token'];
+        }
+
+        return $url;
+    }
+
+    public function getEnterpriseConnectAuthorizationUrl(array $params) : string
+    {
+        $scope_list = rawurlencode(join(" ", $params['scope']));
+        $delegated_scope_list = rawurlencode(join(" ", $params['delegated_scope']));
+
+        $url = $this->connection->getAppRootUrl() . '/enterprise_connect/oauth/authorize?response_type=code&client_id=' . $this->connection->getClientId() . '&redirect_uri=' . urlencode($params['redirect_uri']) . '&scope=' . $scope_list . '&delegated_scope=' . $delegated_scope_list;
+        if (!empty($params['state'])) {
+            $url .= '&state=' . rawurlencode($params['state']);
+        }
+        return $url;
+    }
+
     /**
      * @return mixed
      */
