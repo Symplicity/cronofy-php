@@ -3,9 +3,11 @@
 namespace Cronofy;
 
 use Cronofy\Exception\CronofyException;
+use Cronofy\Http\Response;
 use Cronofy\Interfaces\ConnectionInterface;
+use Cronofy\Interfaces\TokenInterface;
 
-class Token
+class Token implements TokenInterface
 {
     private $refreshToken;
     private $accessToken;
@@ -36,10 +38,11 @@ class Token
             ];
 
             $token = $this->connection->post('oauth/token', $postFields);
+            $token = Response::toArray($token);
             $this->set($token);
             return true;
         } catch (\Exception $e) {
-            throw new CronofyException($e);
+            throw new CronofyException($e->getMessage(), $e->getCode());
         }
         return false;
     }
@@ -60,9 +63,10 @@ class Token
 
         try {
             $token = $this->connection->post('/oauth/token', $postFields);
+            $token = Response::toArray($token);
             $this->set($token);
         } catch (\Exception $e) {
-            throw new CronofyException($e);
+            throw new CronofyException($e->getMessage(), $e->getCode());
         }
     }
 
@@ -77,7 +81,7 @@ class Token
             $links = $this->connection->post('/' . Cronofy::API_VERSION . '/link_tokens');
             return $links;
         } catch (\Exception $e) {
-            throw new CronofyException($e);
+            throw new CronofyException($e->getMessage(), $e->getCode());
         }
     }
 
@@ -98,7 +102,7 @@ class Token
         try {
             return $this->connection->post('/oauth/token/revoke', $postFields);
         } catch (\Exception $e) {
-            throw new CronofyException($e);
+            throw new CronofyException($e->getMessage(), $e->getCode());
         }
     }
 
