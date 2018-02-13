@@ -27,7 +27,8 @@ class ResponseIterator implements ResponseIteratorInterface
         return $this;
     }
 
-    public function each(){
+    public function each()
+    {
         $page = $this->firstPage;
 
         for($i = 0; $i < count($page[$this->itemsKey]); $i++){

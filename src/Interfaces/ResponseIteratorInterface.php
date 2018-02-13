@@ -4,5 +4,5 @@ namespace Cronofy\Interfaces;
 
 interface ResponseIteratorInterface
 {
-    public function each() : array;
+    public function each();
 }
