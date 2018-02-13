@@ -39,7 +39,7 @@ final class Calendar
             $url = $this->getConnectionUrl() . '/events';
             return $this->responseIterator->setItems($url, 'events', $params);
         } catch (\Exception $e) {
-            throw new CronofyException($e->getMessage());
+            throw new CronofyException($e->getMessage(), $e->getCode());
         }
     }
 
@@ -64,6 +64,16 @@ final class Calendar
      * @throws CronofyException | \InvalidArgumentException
      */
     public function upsertEvent(array $params)
+    {
+        $postFields = $this->preparePostParams($params);
+        try {
+            return $this->connection->post('/' . Cronofy::API_VERSION . '/calendars/' . $params['calendar_id'] . '/events', $postFields);
+        } catch (\Exception $e) {
+            throw new CronofyException($e->getMessage());
+        }
+    }
+
+    public function preparePostParams(array $params)
     {
         if (empty($params['calendar_id'])) {
             throw new \InvalidArgumentException('Missing Calendar id in params.');
@@ -101,14 +111,21 @@ final class Calendar
             $postFields['attendees'] = $params['attendees'];
         }
 
+        return $postFields;
+    }
+
+    public function deleteEvent(array $params)
+    {
+        $postFields = $this->prepareDeleteParams($params);
+
         try {
-            return $this->connection->post('/' . Cronofy::API_VERSION . '/calendars/' . $params['calendar_id'] . '/events', $postFields);
+            return $this->connection->delete('/' . Cronofy::API_VERSION . '/calendars/' . $params['calendar_id'] . '/events', $postFields);
         } catch (\Exception $e) {
             throw new CronofyException($e->getMessage());
         }
     }
 
-    public function deleteEvent(array $params)
+    public function prepareDeleteParams(array $params)
     {
         if (empty($params['event_id']) || empty($params['calendar_id'])) {
             throw new \InvalidArgumentException('Missing required params.');
@@ -118,11 +135,7 @@ final class Calendar
             'event_id' => $params['event_id']
         ];
 
-        try {
-            return $this->connection->delete('/' . Cronofy::API_VERSION . '/calendars/' . $params['calendar_id'] . '/events', $postFields);
-        } catch (\Exception $e) {
-            throw new CronofyException($e->getMessage());
-        }
+        return $postFields;
     }
 
     public function createCalendar(array $params)
