@@ -6,7 +6,11 @@ class Response
 {
     public static function toArray(\GuzzleHttp\Psr7\Response $response) : array
     {
-        $body = $response->getBody();
-        return json_decode($body, true);
+        $body = $response->getBody()->getContents();
+        $body = json_decode($body, true);
+        if ($body === null) {
+            return [];
+        }
+        return $body;
     }
 }

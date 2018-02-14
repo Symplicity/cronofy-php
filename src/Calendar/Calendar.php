@@ -39,7 +39,7 @@ final class Calendar
             $url = $this->getConnectionUrl() . '/events';
             return $this->responseIterator->setItems($url, 'events', $params);
         } catch (\Exception $e) {
-            throw new CronofyException($e->getMessage(), $e->getCode());
+            throw new CronofyException($e->getMessage(), $e->getCode(), $e->error_details());
         }
     }
 
@@ -69,7 +69,7 @@ final class Calendar
         try {
             return $this->connection->post('/' . Cronofy::API_VERSION . '/calendars/' . $params['calendar_id'] . '/events', $postFields);
         } catch (\Exception $e) {
-            throw new CronofyException($e->getMessage());
+            throw new CronofyException($e->getMessage(), $e->getCode(), Response::toArray($e->getResponse()));
         }
     }
 
