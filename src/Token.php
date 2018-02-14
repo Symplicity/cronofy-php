@@ -183,7 +183,7 @@ class Token implements TokenInterface
      */
     public function getExpiresIn()
     {
-        return $this->expires_in;
+        return $this->expiresIn;
     }
 
     /**

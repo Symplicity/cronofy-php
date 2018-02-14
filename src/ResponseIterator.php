@@ -50,7 +50,7 @@ class ResponseIterator implements ResponseIteratorInterface
             $response = $this->connection->get($url, $this->urlParams);
             return Response::toArray($response);
         } catch (\Exception $e) {
-            throw new CronofyException($e->getMessage(), $e->getCode());
+            throw new CronofyException($e->getMessage(), $e->getCode(), Response::toArray($e->getResponse()));
         }
     }
 }
