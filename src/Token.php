@@ -49,22 +49,24 @@ class Token implements TokenInterface
 
     /**
      *  The refresh_token issued to you when the user authorized your access to their account. REQUIRED
+     * @param string $refreshToken
      * @return bool
      * @throws CronofyException
      */
-    public function refresh() : bool
+    public function refresh(string $refreshToken) : bool
     {
         $postFields = array(
             'client_id' => $this->connection->getClientId(),
             'client_secret' => $this->connection->getClientSecret(),
             'grant_type' => 'refresh_token',
-            'refresh_token' => $this->refresh_token
+            'refresh_token' => $refreshToken
         );
 
         try {
             $token = $this->connection->post('/oauth/token', $postFields);
             $token = Response::toArray($token);
             $this->set($token);
+            return true;
         } catch (\Exception $e) {
             throw new CronofyException($e->getMessage(), $e->getCode());
         }
