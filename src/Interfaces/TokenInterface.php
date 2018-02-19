@@ -5,7 +5,7 @@ namespace Cronofy\Interfaces;
 interface TokenInterface
 {
     public function request(array $params = []) : bool;
-    public function refresh() : bool;
+    public function refresh(string $refreshToken) : bool;
     public function revoke(string $token);
     public function requestLinkToken();
     public function getAuthorizationURL(array $params) : string;
