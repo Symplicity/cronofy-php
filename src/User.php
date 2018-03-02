@@ -4,6 +4,7 @@ namespace Cronofy;
 
 use Cronofy\Exception\CronofyException;
 use Cronofy\Interfaces\ConnectionInterface;
+use GuzzleHttp\RequestOptions;
 
 class User
 {
@@ -23,9 +24,12 @@ class User
     public function elevatePermissions(array $params)
     {
         try {
-            return $this->connection->post(Cronofy::API_VERSION . '/permissions', $params);
+            return $this->connection->client->post(Cronofy::API_VERSION . '/permissions', [
+                RequestOptions::JSON => $params,
+                'headers' => $this->connection->getHeaders($params)
+            ]);
         } catch (\Exception $e) {
-            throw new CronofyException($e);
+            throw new CronofyException($e->getMessage(), $e->getCode(), Response::toArray($e->getResponse()));
         }
     }
 
