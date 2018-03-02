@@ -80,12 +80,17 @@ final class Calendar
         }
 
         $postFields = array(
-            'event_id' => $params['event_id'],
             'summary' => $params['summary'],
             'description' => $params['description'],
             'start' => $params['start'],
             'end' => $params['end']
         );
+
+        if (!empty($params['event_uid'])) {
+            $postFields['event_uid'] = $params['event_uid'];
+        } else {
+            $postFields['event_id'] = $params['event_id'];
+        }
 
         if (!empty($params['tzid'])) {
             $postFields['tzid'] = $params['tzid'];
