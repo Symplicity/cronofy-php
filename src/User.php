@@ -8,7 +8,6 @@ use GuzzleHttp\RequestOptions;
 
 class User
 {
-
     private $connection;
 
     public function __construct(ConnectionInterface $connection)

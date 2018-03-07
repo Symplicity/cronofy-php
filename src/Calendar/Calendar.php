@@ -54,7 +54,7 @@ final class Calendar
             $url = $this->getConnectionUrl() . '/free_busy';
             return $this->responseIterator->setItems($url, 'free_busy', $params);
         } catch (\Exception $e) {
-            throw new CronofyException($e->getMessage());
+            throw new CronofyException($e->getMessage(), $e->getCode(), Response::toArray($e->getResponse()));
         }
     }
 
@@ -100,19 +100,19 @@ final class Calendar
             $postFields['location'] = $params['location'];
         }
 
-        if(!empty($params['reminders'])) {
+        if (!empty($params['reminders'])) {
             $postFields['reminders'] = $params['reminders'];
         }
 
-        if(!empty($params['reminders_create_only'])) {
+        if (!empty($params['reminders_create_only'])) {
             $postFields['reminders_create_only'] = $params['reminders_create_only'];
         }
 
-        if(!empty($params['transparency'])) {
+        if (!empty($params['transparency'])) {
             $postFields['transparency'] = $params['transparency'];
         }
 
-        if(!empty($params['attendees'])) {
+        if (!empty($params['attendees'])) {
             $postFields['attendees'] = $params['attendees'];
         }
 
@@ -126,7 +126,7 @@ final class Calendar
         try {
             return $this->connection->delete('/' . Cronofy::API_VERSION . '/calendars/' . $params['calendar_id'] . '/events', $postFields);
         } catch (\Exception $e) {
-            throw new CronofyException($e->getMessage());
+            throw new CronofyException($e->getMessage(), $e->getCode(), Response::toArray($e->getResponse()));
         }
     }
 
@@ -148,7 +148,7 @@ final class Calendar
         try {
             return $this->connection->post('/' . Cronofy::API_VERSION . '/calendars', $params);
         } catch (\Exception $e) {
-            throw new CronofyException($e->getMessage());
+            throw new CronofyException($e->getMessage(), $e->getCode(), Response::toArray($e->getResponse()));
         }
     }
 
@@ -164,7 +164,7 @@ final class Calendar
         try {
             return $this->connection->post('/' . Cronofy::API_VERSION . '/add_to_calendar', $postFields);
         } catch (\Exception $e) {
-            throw new CronofyException($e->getMessage());
+            throw new CronofyException($e->getMessage(), $e->getCode(), Response::toArray($e->getResponse()));
         }
     }
 
@@ -185,7 +185,7 @@ final class Calendar
         try {
             return $this->connection->post('/' . Cronofy::API_VERSION . '/calendars/' . $params['calendar_id'] . '/events' . $params['event_uid'] . '/participation_status', $postFields);
         } catch (\Exception $e) {
-            throw new CronofyException($e->getMessage());
+            throw new CronofyException($e->getMessage(), $e->getCode(), Response::toArray($e->getResponse()));
         }
     }
 
@@ -209,7 +209,7 @@ final class Calendar
         try {
             return $this->connection->post('/' . Cronofy::API_VERSION . '/availability', $postFields);
         } catch (\Exception $e) {
-            throw new CronofyException($e->getMessage());
+            throw new CronofyException($e->getMessage(), $e->getCode(), Response::toArray($e->getResponse()));
         }
     }
 
@@ -233,7 +233,7 @@ final class Calendar
         try {
             return $this->connection->post('/' . Cronofy::API_VERSION . '/real_time_scheduling', $postFields);
         } catch (\Exception $e) {
-            throw new CronofyException($e->getMessage());
+            throw new CronofyException($e->getMessage(), $e->getCode(), Response::toArray($e->getResponse()));
         }
     }
 

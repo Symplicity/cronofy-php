@@ -196,7 +196,8 @@ class Token implements TokenInterface
         $this->expiresIn = $expiresIn;
     }
 
-    private function setError(\Exception $e) {
+    private function setError(\Exception $e)
+    {
         $this->error = $e->getMessage();
     }
 
