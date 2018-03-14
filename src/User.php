@@ -3,6 +3,7 @@
 namespace Cronofy;
 
 use Cronofy\Exception\CronofyException;
+use Cronofy\Http\Response;
 use Cronofy\Interfaces\ConnectionInterface;
 use GuzzleHttp\RequestOptions;
 

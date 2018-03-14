@@ -4,6 +4,7 @@ namespace Cronofy\Calendar;
 
 use Cronofy\Exception\CronofyException;
 use Cronofy\Http\Connection;
+use Cronofy\Http\Response;
 use Cronofy\Interfaces\ConnectionInterface;
 
 class Channel
