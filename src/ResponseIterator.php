@@ -31,14 +31,14 @@ class ResponseIterator implements ResponseIteratorInterface
     {
         $page = $this->firstPage;
 
-        for($i = 0; $i < count($page[$this->itemsKey]); $i++){
+        for ($i = 0; $i < count($page[$this->itemsKey]); $i++) {
             yield $page[$this->itemsKey][$i];
         }
 
-        while(isset($page["pages"]["next_page"])){
+        while (isset($page["pages"]["next_page"])) {
             $page = $this->getPage($page["pages"]["next_page"]);
 
-            for($i = 0; $i < count($page[$this->itemsKey]); $i++){
+            for ($i = 0; $i < count($page[$this->itemsKey]); $i++) {
                 yield $page[$this->itemsKey][$i];
             }
         }

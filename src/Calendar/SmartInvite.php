@@ -3,6 +3,7 @@
 namespace Cronofy\Calendar;
 
 use Cronofy\Exception\CronofyException;
+use Cronofy\Http\Response;
 use Cronofy\Interfaces\ConnectionInterface;
 
 class SmartInvite
@@ -35,7 +36,7 @@ class SmartInvite
         try {
             return $this->connection->post('/' . Cronofy::API_VERSION . '/smart_invites', $postFields);
         } catch (\Exception $e) {
-            throw new CronofyException($e);
+            throw new CronofyException($e->getMessage(), $e->getCode(), Response::toArray($e->getResponse()));
         }
     }
 
@@ -59,7 +60,7 @@ class SmartInvite
         try {
             return $this->connection->post('/' . Cronofy::API_VERSION . '/smart_invites', $postFields);
         } catch (\Exception $e) {
-            throw new CronofyException($e);
+            throw new CronofyException($e->getMessage(), $e->getCode(), Response::toArray($e->getResponse()));
         }
     }
 
@@ -79,7 +80,7 @@ class SmartInvite
         try {
             return $this->connection->get('/' . Cronofy::API_VERSION . '/smart_invites', $urlParams);
         } catch (\Exception $e) {
-            throw new CronofyException($e);
+            throw new CronofyException($e->getMessage(), $e->getCode(), Response::toArray($e->getResponse()));
         }
     }
 }

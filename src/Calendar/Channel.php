@@ -4,6 +4,7 @@ namespace Cronofy\Calendar;
 
 use Cronofy\Exception\CronofyException;
 use Cronofy\Http\Connection;
+use Cronofy\Http\Response;
 use Cronofy\Interfaces\ConnectionInterface;
 
 class Channel
@@ -28,7 +29,7 @@ class Channel
 
         $postFields = array('callback_url' => $params['callback_url']);
 
-        if(!empty($params['filters'])) {
+        if (!empty($params['filters'])) {
             $postFields['filters'] = $params['filters'];
         }
 
@@ -36,7 +37,7 @@ class Channel
             $response = $this->connection->post('/' . self::API_VERSION . '/channels', $postFields);
             return Connection::toArray($response);
         } catch (\Exception $e) {
-            throw new CronofyException($e->getMessage());
+            throw new CronofyException($e->getMessage(), $e->getCode(), Response::toArray($e->getResponse()));
         }
     }
 
@@ -50,7 +51,7 @@ class Channel
             $response = $this->connection->get('/' . self::API_VERSION . '/channels');
             return Connection::toArray($response);
         } catch (\Exception $e) {
-            throw new CronofyException($e->getMessage());
+            throw new CronofyException($e->getMessage(), $e->getCode(), Response::toArray($e->getResponse()));
         }
     }
 
@@ -69,7 +70,7 @@ class Channel
             $response = $this->connection->delete('/' . self::API_VERSION . '/channels' . $params['channel_id']);
             return Connection::toArray($response);
         } catch (\Exception $e) {
-            throw new CronofyException($e->getMessage());
+            throw new CronofyException($e->getMessage(), $e->getCode(), Response::toArray($e->getResponse()));
         }
     }
 }

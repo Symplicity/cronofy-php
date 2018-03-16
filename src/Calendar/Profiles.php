@@ -22,7 +22,7 @@ class Profiles
             $response = $this->connection->get('/' . Cronofy::API_VERSION . '/account');
             return Response::toArray($response);
         } catch (\Exception $e) {
-            throw new CronofyException($e->getMessage(), $e->getCode());
+            throw new CronofyException($e->getMessage(), $e->getCode(), Response::toArray($e->getResponse()));
         }
     }
 
@@ -32,7 +32,7 @@ class Profiles
             $response = $this->connection->get('/' . Cronofy::API_VERSION . '/userinfo');
             return Response::toArray($response);
         } catch (\Exception $e) {
-            throw new CronofyException($e->getMessage(), $e->getCode());
+            throw new CronofyException($e->getMessage(), $e->getCode(), Response::toArray($e->getResponse()));
         }
     }
 
@@ -42,7 +42,7 @@ class Profiles
             $response = $this->connection->get('/' . Cronofy::API_VERSION . '/profiles');
             return Response::toArray($response);
         } catch (\Exception $e) {
-            throw new CronofyException($e->getMessage(), $e->getCode());
+            throw new CronofyException($e->getMessage(), $e->getCode(), Response::toArray($e->getResponse()));
         }
     }
 }
