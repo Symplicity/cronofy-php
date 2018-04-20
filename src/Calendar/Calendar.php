@@ -108,6 +108,10 @@ final class Calendar
             $postFields['reminders_create_only'] = $params['reminders_create_only'];
         }
 
+        if (!empty($params['event_private'])) {
+            $postFields['event_private'] = $params['event_private'];
+        }
+
         if (!empty($params['transparency'])) {
             $postFields['transparency'] = $params['transparency'];
         }

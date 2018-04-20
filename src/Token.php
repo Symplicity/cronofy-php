@@ -123,14 +123,21 @@ class Token implements TokenInterface
     {
         $scope_list = rawurlencode(join(" ", $params['scope']));
         $url = $this->connection->getAppRootUrl() . '/oauth/authorize?response_type=code&client_id=' . $this->connection->getClientId() . '&redirect_uri=' . urlencode($params['redirect_uri']) . '&scope=' . $scope_list;
+
         if (!empty($params['state'])) {
             $url .= '&state=' . $params['state'];
         }
+
         if (!empty($params['avoid_linking'])) {
             $url .= '&avoid_linking=' . $params['avoid_linking'];
         }
+
         if (!empty($params['link_token'])) {
             $url.= '&link_token=' . $params['link_token'];
+        }
+
+        if (isset($params['provider_name'])) {
+            $url .= '&provider_name=' . $params['provider_name'];
         }
 
         return $url;
