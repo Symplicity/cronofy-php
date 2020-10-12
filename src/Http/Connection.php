@@ -34,7 +34,7 @@ class Connection implements ConnectionInterface
 
     private function setUrls()
     {
-        $dataCenterAddin = empty($this->config['data_center']) ? '' : sprinf('-%s', $this->config['data_center']);
+        $dataCenterAddin = empty($this->config['data_center']) ? '' : \sprintf('-%s', $this->config['data_center']);
         $this->apiRootUrl = "https://api{$dataCenterAddin}.cronofy.com";
         $this->appRootUrl = "https://app{$dataCenterAddin}.cronofy.com";
         $this->hostDomain = "api{$dataCenterAddin}.cronofy.com";
