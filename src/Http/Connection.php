@@ -72,7 +72,7 @@ class Connection implements ConnectionInterface
         $headers = $this->getHeaders($params);
         return $this->client->request('DELETE', $url, [
             'headers' => $headers,
-            'params' => $params
+            'form_params' => $params
         ]);
     }
 
