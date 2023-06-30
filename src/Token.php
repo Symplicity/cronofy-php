@@ -33,8 +33,8 @@ class Token implements TokenInterface
                 'client_id' => $this->connection->getClientId(),
                 'client_secret' => $this->connection->getClientSecret(),
                 'grant_type' => 'authorization_code',
-                'code' => $params['code'],
-                'redirect_uri' => $params['redirect_uri']
+                'code' => $params['code'] ?? null,
+                'redirect_uri' => $params['redirect_uri'] ?? null
             ];
 
             $token = $this->connection->post('oauth/token', $postFields);
