@@ -44,13 +44,22 @@ class ResponseIterator implements ResponseIteratorInterface
         }
     }
 
+    /**
+     * @throws CronofyException
+     */
     private function getPage(string $url) : array
     {
         try {
             $response = $this->connection->get($url, $this->urlParams);
             return Response::toArray($response);
         } catch (\Exception $e) {
-            throw new CronofyException($e->getMessage(), $e->getCode(), Response::toArray($e->getResponse()));
+            $msg = null;
+
+            if (\method_exists($e, 'getResponse')) {
+                $msg = Response::toArray($e->getResponse());
+            }
+
+            throw new CronofyException($e->getMessage(), $e->getCode(), $msg);
         }
     }
 }
