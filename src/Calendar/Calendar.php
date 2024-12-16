@@ -10,13 +10,10 @@ use Cronofy\Interfaces\ResponseIteratorInterface;
 
 final class Calendar
 {
-    private $connection;
-    private $responseIterator;
-
-    public function __construct(ConnectionInterface $connection, ResponseIteratorInterface $responseIterator)
+    public function __construct(
+        private readonly ConnectionInterface $connection,
+        private readonly ResponseIteratorInterface $responseIterator)
     {
-        $this->connection = $connection;
-        $this->responseIterator = $responseIterator;
     }
 
     public function listCalendars()
@@ -30,7 +27,7 @@ final class Calendar
 
     /**
      * @param array $params
-     * @returns ResponseIteratorInterface
+     * @return ResponseIteratorInterface
      * @throws CronofyException
      */
     public function readEvents(array $params = []) : ResponseIteratorInterface
@@ -73,7 +70,7 @@ final class Calendar
         }
     }
 
-    public function preparePostParams(array $params)
+    public function preparePostParams(array $params): array
     {
         if (empty($params['calendar_id'])) {
             throw new \InvalidArgumentException('Missing Calendar id in params.');
@@ -81,7 +78,6 @@ final class Calendar
 
         $postFields = array(
             'summary' => $params['summary'],
-            'description' => $params['description'],
             'start' => $params['start'],
             'end' => $params['end']
         );
@@ -123,6 +119,9 @@ final class Calendar
         return $postFields;
     }
 
+    /**
+     * @throws CronofyException
+     */
     public function deleteEvent(array $params)
     {
         $postFields = $this->prepareDeleteParams($params);
@@ -134,17 +133,15 @@ final class Calendar
         }
     }
 
-    public function prepareDeleteParams(array $params)
+    public function prepareDeleteParams(array $params): array
     {
         if (empty($params['event_id']) || empty($params['calendar_id'])) {
             throw new \InvalidArgumentException('Missing required params.');
         }
 
-        $postFields = [
+        return [
             'event_id' => $params['event_id']
         ];
-
-        return $postFields;
     }
 
     public function createCalendar(array $params)
@@ -159,8 +156,8 @@ final class Calendar
     public function addToCalendar(array $params)
     {
         $postFields = [
-            'client_id' => $this->client_id,
-            'client_secret' => $this->client_secret,
+            'client_id' => $this->connection->getClientId(),
+            'client_secret' => $this->connection->getClientSecret(),
             'oauth' => $params['oauth'],
             'event' => $params['event'],
         ];
