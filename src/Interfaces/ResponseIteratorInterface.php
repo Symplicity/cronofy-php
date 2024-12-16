@@ -2,7 +2,7 @@
 
 namespace Cronofy\Interfaces;
 
-interface ResponseIteratorInterface extends \IteratorAggregate
+interface ResponseIteratorInterface
 {
     public function each();
 }

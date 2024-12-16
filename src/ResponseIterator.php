@@ -6,7 +6,6 @@ use Cronofy\Exception\CronofyException;
 use Cronofy\Http\Response;
 use Cronofy\Interfaces\ConnectionInterface;
 use Cronofy\Interfaces\ResponseIteratorInterface;
-use Traversable;
 
 class ResponseIterator implements ResponseIteratorInterface
 {
@@ -20,9 +19,6 @@ class ResponseIterator implements ResponseIteratorInterface
         $this->connection = $connection;
     }
 
-    /**
-     * @throws CronofyException
-     */
     public function setItems(string $url, string $itemKey, array $urlParams = []) : self
     {
         $this->itemsKey = $itemKey;
@@ -31,12 +27,7 @@ class ResponseIterator implements ResponseIteratorInterface
         return $this;
     }
 
-    public function getIterator(): \Generator
-    {
-        return $this->each();
-    }
-
-    public function each(): \Generator
+    public function each()
     {
         $page = $this->firstPage;
 

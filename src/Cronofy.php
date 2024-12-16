@@ -107,7 +107,8 @@ class Cronofy
      */
     public function getAuthorizationURL(array $params) : string
     {
-        return $this->tokenManager->getAuthorizationURL($params);
+        $authUrl = $this->tokenManager->getAuthorizationURL($params);
+        return $authUrl;
     }
 
     /**
